@@ -84,7 +84,7 @@ public class HangmanGameResourcesController {
             if(win){
                 msmt.convertAndSend("/topic/wupdate."+gameid,hwa.getWord());
                 msmt.convertAndSend("/topic/winner."+gameid,hwa.getUsername());
-                
+                gameServices.cleanCache(gameid);
             }
             LOG.log(Level.INFO, "Getting word from client {0}:{1}", new Object[]{hwa.getUsername(), hwa.getWord()});
             

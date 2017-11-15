@@ -146,6 +146,11 @@ public class GameServices {
         return cache.getGame(gameid).getWinnerName();
     }
     
-  
-    
+    /**
+     * 
+     * @param gameId 
+     */
+    public void cleanCache(Integer gameId){
+        cache.cleanCache(gameId);
+    }
 }

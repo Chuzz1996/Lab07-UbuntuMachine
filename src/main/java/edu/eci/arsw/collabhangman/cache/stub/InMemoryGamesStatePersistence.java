@@ -73,7 +73,8 @@ public class InMemoryGamesStatePersistence implements GameStateCache{
 
     @Override
     public void cleanCache(Integer gameid) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String temp=gamesState.get(gameid).word;
+        gamesState.replace(gameid,new HangmanGame(temp));
     }
     
 }

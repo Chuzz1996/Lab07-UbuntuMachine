@@ -70,7 +70,12 @@ public class GameStateRedisCache implements GameStateCache {
 
     @Override
     public void cleanCache(Integer gameid) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String value=(String)template.opsForHash().get("game:"+gameid, "word"); 
+        String current="";
+        for(int i=0;i<value.length();i++){current+="_";}
+        template.opsForHash().put("game:"+gameid,"currentWord",current);
+        template.opsForHash().put("game:"+gameid,"state","false");
+        template.opsForHash().put("game:"+gameid,"winner","");
     }
     
     
