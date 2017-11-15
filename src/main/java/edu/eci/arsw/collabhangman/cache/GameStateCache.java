@@ -30,4 +30,6 @@ public interface GameStateCache {
     
     public HangmanGame getGame(int gameid) throws GameServicesException;
     
+    public void cleanCache(Integer gameid);
+    
 }

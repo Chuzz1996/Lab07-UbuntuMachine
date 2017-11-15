@@ -67,6 +67,11 @@ public class GameStateRedisCache implements GameStateCache {
     public void setTemplate(StringRedisTemplate template) {
         this.template = template;
     }
+
+    @Override
+    public void cleanCache(Integer gameid) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     
 }

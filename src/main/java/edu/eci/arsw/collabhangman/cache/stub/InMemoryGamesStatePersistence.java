@@ -70,5 +70,10 @@ public class InMemoryGamesStatePersistence implements GameStateCache{
         gamesState.put(3, new HangmanGame("player"));
         gamesState.put(4, new HangmanGame("winner"));        
     }
+
+    @Override
+    public void cleanCache(Integer gameid) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

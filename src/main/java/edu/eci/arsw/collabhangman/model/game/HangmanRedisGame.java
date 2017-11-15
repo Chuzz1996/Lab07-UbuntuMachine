@@ -6,7 +6,12 @@
 package edu.eci.arsw.collabhangman.model.game;
 
 import edu.eci.arsw.collabhangman.services.GameServicesException;
+import java.util.List;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.RedisScript;
 
 /**
  *
@@ -16,11 +21,14 @@ public class HangmanRedisGame extends HangmanGame {
 
     public int identificadorPartida;
     public StringRedisTemplate template;
+    
+    RedisScript<String> script;
 
     public HangmanRedisGame(String word, StringRedisTemplate srt, Integer id) {
         super(word);
         template = srt;
         identificadorPartida = id;
+        script = script();
     }
 
     /**
@@ -31,22 +39,26 @@ public class HangmanRedisGame extends HangmanGame {
      */
     @Override
     public String addLetter(char l) throws GameServicesException {
+        String letra = String.valueOf(l);
         String value = (String) template.opsForHash().get("game:" + identificadorPartida, "word");
-        String value2 = (String) template.opsForHash().get("game:" + identificadorPartida, "currentWord");
         if (value!=null) {
-            char[] myNameChars = value2.toCharArray();
-            for (int i = 0; i < value.length(); i++) {
-                if (value.charAt(i) == l && i < myNameChars.length) {
-                    myNameChars[i] = l;
-                }
-            }
-            value2 = String.valueOf(myNameChars);
-            template.opsForHash().put("game:" + identificadorPartida, "currentWord", value2);
+            object[] myNameChars = new object[1];
+            myNameChars[0] = letra;
+            template.execute(new SessionCallback< List< Object>>() {
+                @SuppressWarnings("unchecked")
+                @Override
+                public < K, V> List<Object> execute(final RedisOperations< K, V> operations) throws DataAccessException {
+                    operations.watch((K) ("game:" + identificadorPartida + " currentWord"));
+                    operations.multi();
+                    operations.execute(script, Collections.singletonList((K)("game:"+identificadorPartida)), args);
+                    return operations.exec();
+                 }
+            });
         } else {
             throw new GameServicesException("No existe dicha partida!!");
         }
 
-        return value2;
+        return value;
     }
 
     @Override
@@ -54,11 +66,19 @@ public class HangmanRedisGame extends HangmanGame {
         String value = (String) template.opsForHash().get("game:" + identificadorPartida, "word");
         if (value!=null) {
             if (s.toLowerCase().equals(value)) {
-                template.opsForHash().put("game:" + identificadorPartida, "winner", playerName);
-                template.opsForHash().put("game:" + identificadorPartida, "state", "true");
-                template.opsForHash().put("game:" + identificadorPartida, "currentWord", value);
+                template.execute(new SessionCallback< List< Object>>() {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public < K, V> List<Object> execute(final RedisOperations< K, V> operations) throws DataAccessException {
+                        operations.watch((K) ("game:" + identificadorPartida + " currentWord"));
+                        operations.multi();
+                        operations.opsForHash().put((K)("game:" + identificadorPartida), "currentWord", value);
+                        operations.opsForHash().put((K)("game:" + identificadorPartida), "winner", playerName);
+                        operations.opsForHash().put((K)("game:" + identificadorPartida), "state", "true");
+                        return operations.exec();
+                    }
+                });
                 return true;
-            }
         } else {
             throw new GameServicesException("No existe dicha partida!!");
         }
@@ -95,6 +115,13 @@ public class HangmanRedisGame extends HangmanGame {
             throw new GameServicesException("No existe dicha partida!!");
         }
         return value2;
+    }
+    
+    public RedisScript<String> script() {
+        DefaultRedisScript<String> redisScript = new DefaultRedisScript<>();
+        redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("/redis/scripts/luaFile.lua")));
+        redisScript.setResultType(String.class);
+        return redisScript;
     }
 
 }
