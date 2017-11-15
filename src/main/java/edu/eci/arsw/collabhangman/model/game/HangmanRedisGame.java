@@ -46,7 +46,7 @@ public class HangmanRedisGame extends HangmanGame {
     public String addLetter(char l) throws GameServicesException {
         String letra = String.valueOf(l);
         String value = (String) template.opsForHash().get("game:" + identificadorPartida, "word");
-        if (value!=null) {
+        if (value.equals("nil")) {
             Object[] myNameChars = new Object[1];
             myNameChars[0] = letra;
             template.execute(new SessionCallback< List< Object>>() {
@@ -69,7 +69,7 @@ public class HangmanRedisGame extends HangmanGame {
     @Override
     public synchronized boolean tryWord(String playerName, String s) throws GameServicesException {
         String value = (String) template.opsForHash().get("game:" + identificadorPartida, "word");
-        if (value!=null) {
+        if (value.equals("nil")) {
             if (s.toLowerCase().equals(value)) {
                 template.execute(new SessionCallback< List< Object>>() {
                     @SuppressWarnings("unchecked")
@@ -93,7 +93,7 @@ public class HangmanRedisGame extends HangmanGame {
     @Override
     public boolean gameFinished() throws GameServicesException {
         String value2 = (String) template.opsForHash().get("game:" + identificadorPartida, "state");
-        if(value2==null){
+        if(value2.equals("nil")){
             throw new GameServicesException("No existe dicha partida!!");
         }
         return !value2.equals("false");
@@ -107,7 +107,7 @@ public class HangmanRedisGame extends HangmanGame {
     @Override
     public String getWinnerName() throws GameServicesException {
         String value2 = (String) template.opsForHash().get("game:" + identificadorPartida, "winner");
-        if(value2==null){
+        if(value2.equals("nil")){
             throw new GameServicesException("No existe dicha partida!!");
         }
         return value2;
@@ -116,7 +116,7 @@ public class HangmanRedisGame extends HangmanGame {
     @Override
     public String getCurrentGuessedWord() throws GameServicesException {
         String value2 = (String) template.opsForHash().get("game:" + identificadorPartida, "currentWord");
-        if(value2==null){
+        if(value2.equals("nil")){
             throw new GameServicesException("No existe dicha partida!!");
         }
         return value2;
