@@ -46,7 +46,7 @@ public class HangmanRedisGame extends HangmanGame {
     public String addLetter(char l) throws GameServicesException {
         String letra = String.valueOf(l);
         String value = (String) template.opsForHash().get("game:" + identificadorPartida, "word");
-        if (value.equals("nil")) {
+        if (!value.equals("nil")) {
             Object[] myNameChars = new Object[1];
             myNameChars[0] = letra;
             template.execute(new SessionCallback< List< Object>>() {
@@ -60,7 +60,7 @@ public class HangmanRedisGame extends HangmanGame {
                  }
             });
         } else {
-            throw new GameServicesException("No existe dicha partida!!");
+            throw new GameServicesException("No se encontro letra");
         }
 
         return value;
@@ -85,7 +85,7 @@ public class HangmanRedisGame extends HangmanGame {
                 });
                 return true;
         }} else {
-            throw new GameServicesException("No existe dicha partida!!");
+            throw new GameServicesException("No se encontro palabra");
         }
         return false;
     }
@@ -94,7 +94,7 @@ public class HangmanRedisGame extends HangmanGame {
     public boolean gameFinished() throws GameServicesException {
         String value2 = (String) template.opsForHash().get("game:" + identificadorPartida, "state");
         if(value2.equals("nil")){
-            throw new GameServicesException("No existe dicha partida!!");
+            throw new GameServicesException("No se finalizo el juego");
         }
         return !value2.equals("false");
     }
@@ -108,7 +108,7 @@ public class HangmanRedisGame extends HangmanGame {
     public String getWinnerName() throws GameServicesException {
         String value2 = (String) template.opsForHash().get("game:" + identificadorPartida, "winner");
         if(value2.equals("nil")){
-            throw new GameServicesException("No existe dicha partida!!");
+            throw new GameServicesException("No se encontro ganador");
         }
         return value2;
     }
@@ -117,7 +117,7 @@ public class HangmanRedisGame extends HangmanGame {
     public String getCurrentGuessedWord() throws GameServicesException {
         String value2 = (String) template.opsForHash().get("game:" + identificadorPartida, "currentWord");
         if(value2.equals("nil")){
-            throw new GameServicesException("No existe dicha partida!!");
+            throw new GameServicesException("No se encontro partida");
         }
         return value2;
     }
