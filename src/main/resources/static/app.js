@@ -37,6 +37,7 @@ var app = (function () {
             $.get("/hangmangames/" + gameid + "/currentword",
                     function (data) {
                         $("#palabra").html("<h1>" + data + "</h1>");
+                        $("#ultimoPuntaje").html("<div id='ultimoPuntaje'>Ultimo puntaje: "+data.scores[data.scores.length-1]+"</div>")
                     }
             ).fail(
                     function (data) {
@@ -48,6 +49,23 @@ var app = (function () {
 
         }
         ,
+        loadPuntaje: function(){
+            $.get("/hangmangames/scores" + score, 
+                    function(data){
+                        var stringData=""
+                        for(var i=0;i<data.length;i++){
+                                stringData+="<label>Score: "+data[i]+"<label>"
+                                }
+                        $("#puntajes").html("<div id='puntajes'>Usuarios con puntajes mayores a 100:"+
+                                stringData
+                                +"</div>");
+                    }
+            ).fail(
+                    function (data) {
+                        alert(data["responseText"]);
+                    }
+            );       
+        },
         wsconnect: function () {
             gameid = $("#gameid").val();
             var socket = new SockJS('/stompendpoint');

@@ -1,0 +1,9 @@
+game:(#id) --> (#id) debe ser reemplazado por el numero identificador de la partida, esta contiene los datos de la partida
+word --> Contiene la palabra de la partida
+currentWord --> Contiene la palabra con los respectivos espacios de la partida
+winner --> nombre del ganado de la partida
+state --> contiene el estado de la partida
+
+
+El scrip en agregar letra falla, el profesor nos menciono documentarlo y pasar a la siguiente parte
+

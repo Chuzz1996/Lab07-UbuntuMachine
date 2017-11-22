@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
     
-    <body>
+    <body onload="app.loadPuntaje()">
         <h1 class="title">AHORCADO MULTIJUGADOR</h1>
 
         <div class="centeredinput">
@@ -70,6 +70,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
            
             
         </div>
+        
+        <div id="ultimoPuntaje">
+            Ultimo puntaje: ???
+        </div>
 
 
         <div class="box">
@@ -85,7 +89,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
         
         
-        
+        <div id="puntajes">
+            Usuarios con puntajes mayores a 100: 
+        </div>
         
     </body>
 </html>

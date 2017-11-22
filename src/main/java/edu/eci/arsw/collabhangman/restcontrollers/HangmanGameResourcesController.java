@@ -61,6 +61,11 @@ public class HangmanGameResourcesController {
         }
     }
     
+    @RequestMapping(path = "/scores/{score}", method = RequestMethod.GET)
+    public ResponseEntity<?> getScores(@PathVariable String score) {
+        return new ResponseEntity<>(gameServices.loadScores(score), HttpStatus.ACCEPTED);
+    }
+    
     @RequestMapping(path = "/{gameid}/letterattempts", method = RequestMethod.POST)
     public ResponseEntity<?> tryLetterInGame(@PathVariable Integer gameid, @RequestBody HangmanLetterAttempt hga){
         try {
