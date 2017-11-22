@@ -13,6 +13,8 @@ var app = (function () {
                 var info = "<div>" + "<img id=imagenjugador " + "src=" + data.photoUrl + " />" + "</div>" + "<div>" + "Nombre:" + data.name + "</div>";
                 document.getElementById("datosjugador").innerHTML = info;
                 nombreJugador = data.name;
+                var ultimoPuntaje = "<label> "+data.scores[data.scores.length-1].puntaje+"</label>";
+                $("#ultimoPuntaje").html("<div id='ultimoPuntaje'>Ultimo puntaje:"+ultimoPuntaje+"</div>");
             }
         );
         getPromise.then(function () {
@@ -47,24 +49,6 @@ var app = (function () {
             );
 
 
-        }
-        ,
-        loadPuntaje: function(){
-            $.get("/hangmangames/scores" + score, 
-                    function(data){
-                        var stringData=""
-                        for(var i=0;i<data.length;i++){
-                                stringData+="<label>Score: "+data[i]+"<label>"
-                                }
-                        $("#puntajes").html("<div id='puntajes'>Usuarios con puntajes mayores a 100:"+
-                                stringData
-                                +"</div>");
-                    }
-            ).fail(
-                    function (data) {
-                        alert(data["responseText"]);
-                    }
-            );       
         },
         wsconnect: function () {
             gameid = $("#gameid").val();
@@ -129,6 +113,26 @@ var app = (function () {
 
         },
         getUser: function () {
+            $.get("/users/scores", 
+                    function(data){
+                        var stringData=""
+                        for(var i=0;i<data.length;i++){
+                                stringData+="<label>Persona: "+data[i].name+"Puntaje: ";
+                                for(var j = 0; j < data[i].scores.length; j++){
+                                    if(data[i].scores[j].puntaje>=100){
+                                        stringData+=data[i].scores[j].puntaje+" </label>";
+                                    }
+                                }
+                        }
+                        $("#puntajes").html("<div id='puntajes'>Usuarios con puntajes mayores a 100:"+
+                                stringData
+                                +"</div>");
+                    }
+            ).fail(
+                    function (data) {
+                        alert(data["responseText"]);
+                    }
+            );       
             getUser();
         }
         

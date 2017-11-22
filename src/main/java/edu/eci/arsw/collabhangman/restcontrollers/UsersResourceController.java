@@ -50,5 +50,10 @@ public class UsersResourceController {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
+    
+    @RequestMapping(path = "/scores", method = RequestMethod.GET)
+    public ResponseEntity<?> getScores() {
+        return new ResponseEntity<>(gameServices.loadScores(), HttpStatus.ACCEPTED);
+    }
 
 }

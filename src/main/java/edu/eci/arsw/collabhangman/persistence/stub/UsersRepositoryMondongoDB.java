@@ -27,7 +27,6 @@ public abstract class UsersRepositoryMondongoDB implements UsersRepository {
      * @param score
      * @return
      */
-    @Query("{\"scores\": {\"$elemMatch\": {\"puntaje\": {\"$gte\": 'score'}}}}")
-    public abstract List<User> findScore(String score);
+    public abstract List<User> findScore();
     
 }

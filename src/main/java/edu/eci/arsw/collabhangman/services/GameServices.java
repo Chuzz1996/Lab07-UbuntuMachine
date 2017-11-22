@@ -61,8 +61,8 @@ public class GameServices {
         }
     }
     
-    public List<User> loadScores(String puntaje){
-        return usersRepository.findScore(puntaje);
+    public List<User> loadScores(){
+        return usersRepository.findScore();
     }
     
     public Set<User> getAllUsers(){
